@@ -1,60 +1,51 @@
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
+package com.cyat.backend;
+
+import java.io.*;
+import java.net.*;
+import java.time.LocalDateTime;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        System.out.println("Starting CEEYIT Backend Server...");
-        
-        // Create HTTP server on port 8080
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        
-        // Create context for root path
-        server.createContext("/", new RootHandler());
-        server.createContext("/health", new HealthHandler());
-        server.createContext("/api", new ApiHandler());
-        
-        // Start the server
-        server.setExecutor(null);
-        server.start();
-        
-        System.out.println("Backend server started on port 8080");
-        System.out.println("Server is ready to accept requests...");
-    }
-    
-    static class RootHandler implements HttpHandler {
-        public void handle(HttpExchange exchange) throws IOException {
-            String response = "CEEYIT Backend Service is running!";
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-        }
-    }
-    
-    static class HealthHandler implements HttpHandler {
-        public void handle(HttpExchange exchange) throws IOException {
-            String response = "{\"status\":\"healthy\",\"service\":\"ceeyit-backend\"}";
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-        }
-    }
-    
-    static class ApiHandler implements HttpHandler {
-        public void handle(HttpExchange exchange) throws IOException {
-            String response = "{\"message\":\"Hello from CEEYIT Backend API!\",\"timestamp\":\"" + 
-                            java.time.Instant.now().toString() + "\"}";
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+    public static void main(String[] args) {
+        try {
+            // Create a simple HTTP server
+            ServerSocket serverSocket = new ServerSocket(8080);
+            System.out.println("CEEYIT Backend Server started on port 8080");
+            
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                
+                // Read the request
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                String inputLine = in.readLine();
+                
+                // Send HTTP response
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                out.println("HTTP/1.1 200 OK");
+                out.println("Content-Type: text/html");
+                out.println("Connection: close");
+                out.println();
+                
+                // Send HTML response
+                out.println("<!DOCTYPE html>");
+                out.println("<html><head><title>CEEYIT Backend</title>");
+                out.println("<style>body{font-family:Arial;text-align:center;margin-top:100px;background:#f8f9fa}</style>");
+                out.println("</head><body>");
+                out.println("<h1 style='color:#28a745'>🚀 CEEYIT Backend Service</h1>");
+                out.println("<h2>✅ Java Backend is Running Successfully!</h2>");
+                out.println("<p><strong>Server Time:</strong> " + LocalDateTime.now() + "</p>");
+                out.println("<p><strong>Status:</strong> GitOps Deployment Active</p>");
+                out.println("<p><strong>Managed by:</strong> ArgoCD + Kubernetes</p>");
+                out.println("<div style='margin-top:30px;padding:20px;background:#e8f5e8;border-radius:10px;display:inline-block'>");
+                out.println("<h3>🏆 Project 4 Backend Complete!</h3>");
+                out.println("<p>✅ Docker Container Running</p>");
+                out.println("<p>✅ Kubernetes Deployment Active</p>");
+                out.println("<p>✅ Load Balancer Accessible</p>");
+                out.println("</div></body></html>");
+                
+                clientSocket.close();
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
         }
     }
 }
