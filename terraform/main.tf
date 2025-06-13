@@ -33,7 +33,8 @@ module "vpc" {
 
 # EKS Cluster
 module "eks" {
-  source = "terraform-aws-modules/eks/aws"
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.31"
   
   cluster_name    = "ceeyit-gitops-cluster"
   cluster_version = "1.28"
@@ -41,18 +42,32 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
   
-  node_groups = {
+  # Enable cluster creator admin permissions
+  enable_cluster_creator_admin_permissions = true
+  
+  # EKS Managed Node Groups
+  eks_managed_node_groups = {
     main = {
-      desired_capacity = 2
-      max_capacity     = 4
-      min_capacity     = 1
-      
+      min_size     = 1
+      max_size     = 4
+      desired_size = 2
+
       instance_types = ["t3.medium"]
-      
-      k8s_labels = {
+      capacity_type  = "ON_DEMAND"
+
+      labels = {
         Environment = "dev"
         Application = "ceeyit-gitops"
       }
+
+      update_config = {
+        max_unavailable_percentage = 25
+      }
     }
+  }
+
+  tags = {
+    Environment = "dev"
+    Terraform   = "true"
   }
 }
