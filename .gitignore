@@ -33,3 +33,18 @@ npm-debug.log*
 # Temporary files
 *.tmp
 *.temp
+# ArgoCD binary
+argocd-linux-amd64
+argocd-*
+
+# Backup files
+*.bak
+*.backup
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/

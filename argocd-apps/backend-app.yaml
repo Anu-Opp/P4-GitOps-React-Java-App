@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ceeyit-backend
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Anu-Opp/P4-GitOps-React-Java-App.git
+    targetRevision: dev
+    path: helm-charts/backend-chart
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+  revisionHistoryLimit: 3

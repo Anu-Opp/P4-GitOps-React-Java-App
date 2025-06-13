@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: anuopp/ceeyit-frontend
-  tag: latest
+  tag: v2.0
   pullPolicy: Always
 
 service:
