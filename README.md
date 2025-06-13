@@ -1,7 +1,6 @@
 # P4-GitOps-React-Java-App
 
 P4-GitOps-React-Java-App/
-├── argocd-apps/
 ├── backend/
 │   ├── Dockerfile
 │   └── Main.java
